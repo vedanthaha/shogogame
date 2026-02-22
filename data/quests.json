@@ -6,9 +6,9 @@
         "description": "Start the day with small acts of care.",
         "prereq": null,
         "steps": [
-            { "type": "visit_tile", "map": "shogo_bedroom", "x": 6, "y": 5, "tile": "c", "hint": "Check your PC messages" },
+            { "type": "scripted", "map": "shogo_bedroom", "x": 6, "y": 5, "hint": "Check your PC messages" },
             { "type": "interact", "map": "shogo_bedroom", "x": 3, "y": 1, "hint": "Water the plant (it looks thirsty)" },
-                        { "type": "scripted", "map": "shogo_bedroom", "x": 6, "y": 5, "hint": "Check your PC messages" },,
+            { "type": "interact", "map": "shogo_bedroom", "x": 6, "y": 4, "hint": "Tidy up in the mirror" },
             { "type": "visit", "map": "shogo_house_f1", "x": 4, "y": 6, "radius": 2, "hint": "Head downstairs" }
         ],
         "reward": { "vibe": 10 },
