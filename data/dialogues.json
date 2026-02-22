@@ -1,4 +1,39 @@
 {
+  "vedi_quest_start": {
+    "text": "Hey Shogo! It's so nice out. Do you think... we could go for a drive?",
+    "choices": [
+      {
+        "label": "Hop in! To the highway?",
+        "vibeGain": 5,
+        "response": "Yes! The highway is perfect! I'll get in the passenger seat."
+      },
+      {
+        "label": "Maybe later.",
+        "vibeGain": 0,
+        "response": "Oh... okay. I'll be here if you change your mind."
+      }
+    ]
+  },
+  "vedi_highway_chat": {
+    "text": "Whoa! Look at that view! The wind feels amazing!",
+    "choices": [
+      {
+        "label": "Best copilot ever!",
+        "vibeGain": 10,
+        "response": "Haha! You're a pretty good driver too!"
+      }
+    ]
+  },
+  "vedi_quest_end": {
+      "text": "Thanks for the ride, Shogo. That really cleared my head.",
+      "choices": [
+          {
+              "label": "Anytime, Vedi.",
+              "vibeGain": 5,
+              "response": "You're the best. See you around!"
+          }
+      ]
+  },
   "luna_greet": {
     "text": "I... I tried to share my art online but nobody noticed. Maybe it's not good enough...",
     "choices": [

@@ -190,10 +190,11 @@ const Vehicles = {
     interact(vehicle) {
         // Shared ride logic: Find Vedi within 5 tiles
         const map = Maps.data[Maps.current];
-        const vedi = (map?.npcs?.find(n => n.id === 'vedi' && Math.abs(n.x - vehicle.x) <= 5 && Math.abs(n.y - vehicle.y) <= 5)) ||
-            (Quests.companionNPC && Quests.companionNPC.id === 'vedi' ? Quests.companionNPC : null);
+        // Use flexible ID check like in togglePassenger
+        const vedi = (map?.npcs?.find(n => (n.id.includes('vedi') || n.sprite === 'vedi') && Math.abs(n.x - vehicle.x) <= 5 && Math.abs(n.y - vehicle.y) <= 5)) ||
+            (Quests.companionNPC && Quests.companionNPC.id.includes('vedi') ? Quests.companionNPC : null);
 
-        if (vedi && vedi.id === 'vedi' && !this.vediPassenger) {
+        if (vedi && !this.vediPassenger) {
             Dialogue.show("Do you want Vedi to sit with you?", ["Yes!", "No, just me."], "Vedi", (idx) => {
                 // Prevent immediate re-trigger of interaction by clearing the key or adding a small cooldown
                 Engine.keys['e'] = false; 

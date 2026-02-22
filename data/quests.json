@@ -1,4 +1,39 @@
 {
+    "vedi_ride": {
+        "title": "Highway Breeze",
+        "giver": "vedi",
+        "type": "shared",
+        "description": "Vedi looks bored. Maybe she'd like a ride on the highway?",
+        "prereq": null,
+        "steps": [
+            {
+                "type": "talk_to",
+                "target": "vedi",
+                "dialogue": "vedi_quest_start",
+                "hint": "Talk to Vedi about a ride"
+            },
+            {
+                "type": "visit",
+                "map": "mhow_highway",
+                "x": 55,
+                "y": 12,
+                "radius": 4,
+                "condition": "passenger_vedi",
+                "dialogue": "vedi_highway_chat",
+                "hint": "Drive to the end of Mhow Highway with Vedi"
+            },
+             {
+                "type": "talk_to",
+                "target": "vedi",
+                "dialogue": "vedi_quest_end",
+                "hint": "Talk to Vedi"
+            }
+        ],
+        "reward": {
+            "vibe": 50
+        },
+        "completion": "Vedi smiles. 'That was awesome! Fastest we've ever gone!'"
+    },
     "luna_art": {
         "title": "Art From the Heart",
         "giver": "luna",
