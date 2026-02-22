@@ -10,6 +10,15 @@ const Engine = {
     fontReady: false,
     _tc: {}, _tmpC: null, _tmpX: null,
 
+    // ===== WEATHER & TIME =====
+    weather: 'clear',          // 'clear' | 'cloudy' | 'rain' | 'storm' | 'night'
+    weatherList: ['clear', 'cloudy', 'rain', 'storm', 'night'],
+    dayTime: 0.35,             // 0=midnight, 0.25=sunrise, 0.5=noon, 0.75=sunset, 1=midnight
+    daySpeed: 0.0008,          // how fast time passes (full day = ~1250s real time)
+    rainDrops: [],
+    phoneOpen: false,
+    phoneTab: 0,               // 0=weather tab
+
     // Intro sequence state
     introPhase: 0, introTimer: 0,
     introLines: [
@@ -106,6 +115,26 @@ const Engine = {
             if (e.key === 'Escape' && this.state === 'worldmap') this.toggleWorldMap();
             if (this.state === 'worldmap' && (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'ArrowDown' || e.key === 's')) {
                 this.mapSelection = (this.mapSelection + (e.key.includes('Up') || e.key === 'w' ? -1 : 1) + 3) % 3;
+            }
+            // Phone: Up arrow opens/closes
+            if (e.key === 'ArrowUp' && ['playing', 'swimming', 'driving'].includes(this.state)) {
+                this.phoneOpen = !this.phoneOpen;
+                e.preventDefault();
+            }
+            if (this.phoneOpen) {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                    const i = this.weatherList.indexOf(this.weather);
+                    this.weather = this.weatherList[(i - 1 + this.weatherList.length) % this.weatherList.length];
+                    this.showToast('Weather: ' + this.weather.charAt(0).toUpperCase() + this.weather.slice(1));
+                    e.preventDefault();
+                }
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                    const i = this.weatherList.indexOf(this.weather);
+                    this.weather = this.weatherList[(i + 1) % this.weatherList.length];
+                    this.showToast('Weather: ' + this.weather.charAt(0).toUpperCase() + this.weather.slice(1));
+                    e.preventDefault();
+                }
+                if (e.key === 'Escape' || e.key === 'ArrowDown') { this.phoneOpen = false; e.preventDefault(); }
             }
         });
         window.addEventListener('keyup', e => { this.keys[e.key] = false; });
@@ -296,6 +325,78 @@ const Engine = {
         if (this.toastTimer > 0) this.toastTimer -= dt;
         NPC.updateIdle(dt);
         NPC.updateAnimals(dt);
+        this.updateWeather(dt);
+    },
+
+    // ===== WEATHER =====
+    updateWeather(dt) {
+        // Advance time of day
+        this.dayTime = (this.dayTime + this.daySpeed * dt) % 1;
+
+        // Auto-switch to night weather overlay when it's nighttime (0.8-0.2)
+        // (user can still override via phone)
+
+        // Spawn rain drops
+        const isRaining = this.weather === 'rain' || this.weather === 'storm';
+        if (isRaining) {
+            const rate = this.weather === 'storm' ? 6 : 3;
+            for (let i = 0; i < rate; i++) {
+                this.rainDrops.push({
+                    x: Math.random() * this.W + this.camX % this.W,
+                    y: -4 + Math.random() * 10,
+                    spd: 180 + Math.random() * 80,
+                    len: this.weather === 'storm' ? 6 + Math.random() * 4 : 4 + Math.random() * 3,
+                    alpha: 0.5 + Math.random() * 0.4
+                });
+            }
+        }
+        for (let i = this.rainDrops.length - 1; i >= 0; i--) {
+            const d = this.rainDrops[i];
+            d.y += d.spd * dt;
+            d.x += (this.weather === 'storm' ? 40 : 10) * dt;
+            if (d.y > this.H + 10) this.rainDrops.splice(i, 1);
+        }
+        if (!isRaining) this.rainDrops = [];
+    },
+
+    // Returns sky/ambient overlay color based on time of day + weather
+    getSkyOverlay() {
+        const t = this.dayTime;
+        // t: 0=midnight, 0.25=dawn, 0.5=noon, 0.75=dusk, 1=midnight
+        let r, g, b, a;
+        if (t < 0.2) {          // midnight -> dawn
+            const p = t / 0.2;
+            r = Math.round(10 + p * 20); g = Math.round(5 + p * 15); b = Math.round(40 + p * 20); a = 0.55 - p * 0.2;
+        } else if (t < 0.3) {  // dawn
+            const p = (t - 0.2) / 0.1;
+            r = Math.round(30 + p * 160); g = Math.round(20 + p * 80); b = Math.round(60 - p * 20); a = 0.35 - p * 0.3;
+        } else if (t < 0.65) { // daytime
+            r = 180; g = 210; b = 255; a = 0;
+        } else if (t < 0.75) { // sunset
+            const p = (t - 0.65) / 0.1;
+            r = Math.round(180 + p * 60); g = Math.round(210 - p * 100); b = Math.round(255 - p * 200); a = p * 0.2;
+        } else if (t < 0.85) { // dusk -> night
+            const p = (t - 0.75) / 0.1;
+            r = Math.round(240 - p * 230); g = Math.round(110 - p * 105); b = Math.round(55 - p * 15); a = 0.2 + p * 0.35;
+        } else {                // night
+            r = 10; g = 5; b = 40; a = 0.55;
+        }
+        // Weather modifiers
+        if (this.weather === 'night') { r = 10; g = 5; b = 40; a = 0.6; }
+        if (this.weather === 'cloudy') { a = Math.max(a, 0.08); r = Math.min(r + 20, 255); g = Math.min(g + 20, 255); b = Math.min(b + 20, 255); }
+        if (this.weather === 'rain')   { a = Math.max(a, 0.15); r = 20; g = 30; b = 60; }
+        if (this.weather === 'storm')  { a = Math.max(a, 0.30); r = 10; g = 10; b = 30; }
+        return { r, g, b, a };
+    },
+
+    getTimeLabel() {
+        const t = this.dayTime;
+        const hours = Math.floor(t * 24);
+        const mins = Math.floor((t * 24 * 60) % 60);
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const h = hours % 12 || 12;
+        const m = mins < 10 ? '0' + mins : mins;
+        return `${h}:${m} ${ampm}`;
     },
 
     // ===== CAMERA =====
@@ -396,6 +497,9 @@ const Engine = {
         // 6. Petals
         if (Maps.current === 'overworld') this.renderPetals(ctx);
 
+        // 6b. Weather effects
+        this.renderWeather(ctx);
+
         // 7. HUD
         this.renderHUD(ctx);
 
@@ -436,6 +540,135 @@ const Engine = {
         }
     },
 
+    renderWeather(ctx) {
+        const sky = this.getSkyOverlay();
+        if (sky.a > 0) {
+            ctx.fillStyle = `rgba(${sky.r},${sky.g},${sky.b},${sky.a})`;
+            ctx.fillRect(0, 0, this.W, this.H);
+        }
+
+        // Clouds
+        if (this.weather === 'cloudy' || this.weather === 'rain' || this.weather === 'storm') {
+            ctx.globalAlpha = this.weather === 'storm' ? 0.35 : 0.18;
+            // Slow-moving cloud strips
+            const cx = (this.time * 8) % (this.W * 2);
+            ctx.fillStyle = '#aaccee';
+            for (let i = 0; i < 5; i++) {
+                const bx = (((i * 97 + this.W) - cx) % (this.W + 100)) - 50;
+                const by = 20 + i * 18;
+                ctx.beginPath();
+                ctx.ellipse(bx, by, 55 + i * 8, 14 + i * 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // Rain drops
+        if (this.rainDrops.length > 0) {
+            ctx.strokeStyle = '#a8d0f8';
+            ctx.lineWidth = 1;
+            for (const d of this.rainDrops) {
+                ctx.globalAlpha = d.alpha;
+                ctx.beginPath();
+                ctx.moveTo(d.x, d.y);
+                ctx.lineTo(d.x + (this.weather === 'storm' ? 3 : 1), d.y + d.len);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // Lightning flash for storm
+        if (this.weather === 'storm' && Math.random() < 0.001) {
+            ctx.fillStyle = 'rgba(220,230,255,0.18)';
+            ctx.fillRect(0, 0, this.W, this.H);
+        }
+
+        // Night stars
+        if (this.weather === 'night' || (this.dayTime > 0.85 || this.dayTime < 0.2)) {
+            const starA = this.weather === 'night' ? 0.7 :
+                this.dayTime > 0.85 ? (this.dayTime - 0.85) / 0.15 * 0.7 :
+                (0.2 - this.dayTime) / 0.2 * 0.7;
+            ctx.fillStyle = '#ffffff';
+            // Deterministic stars using seeded positions
+            for (let i = 0; i < 40; i++) {
+                const sx = ((i * 137 + i * i * 29) % this.W);
+                const sy = ((i * 73 + i * 41) % (this.H * 0.5));
+                const twinkle = 0.4 + 0.6 * Math.abs(Math.sin(this.time * 1.2 + i));
+                ctx.globalAlpha = starA * twinkle;
+                ctx.fillRect(sx, sy, 1, 1);
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // Phone overlay
+        if (this.phoneOpen) this.renderPhone(ctx);
+    },
+
+    renderPhone(ctx) {
+        const pw = 140, ph = 180;
+        const px = Math.floor((this.W - pw) / 2), py = Math.floor((this.H - ph) / 2);
+
+        // Phone shell
+        ctx.fillStyle = 'rgba(10,8,25,0.95)';
+        ctx.strokeStyle = '#C9B1FF';
+        ctx.lineWidth = 2;
+        this._roundRect(ctx, px, py, pw, ph, 8);
+        ctx.fill(); ctx.stroke();
+
+        // Top notch
+        ctx.fillStyle = '#1a1530';
+        this._roundRect(ctx, px + 45, py + 6, 50, 8, 4);
+        ctx.fill();
+
+        // Title
+        this.drawText(ctx, "SHOGO'S PHONE", px + pw / 2, py + 24, '#C9B1FF', 8, 'center');
+
+        // Time
+        this.drawText(ctx, this.getTimeLabel(), px + pw / 2, py + 38, '#FFD070', 8, 'center');
+
+        // Weather tab header
+        ctx.fillStyle = 'rgba(80,60,120,0.6)';
+        ctx.fillRect(px + 8, py + 50, pw - 16, 14);
+        this.drawText(ctx, '☁ WEATHER', px + pw / 2, py + 60, '#FFE8F0', 8, 'center');
+
+        // Weather options
+        const weathers = [
+            { id: 'clear',  icon: '☀', label: 'Clear',  color: '#FFD070' },
+            { id: 'cloudy', icon: '⛅', label: 'Cloudy', color: '#aaccee' },
+            { id: 'rain',   icon: '🌧', label: 'Rain',   color: '#88aadd' },
+            { id: 'storm',  icon: '⛈', label: 'Storm',  color: '#6688aa' },
+            { id: 'night',  icon: '🌙', label: 'Night',  color: '#9988cc' },
+        ];
+        weathers.forEach((w, i) => {
+            const row = Math.floor(i / 2), col = i % 2;
+            const bx = px + 10 + col * 62, by = py + 70 + row * 34;
+            const active = this.weather === w.id;
+            ctx.fillStyle = active ? 'rgba(150,120,220,0.5)' : 'rgba(40,30,60,0.6)';
+            ctx.strokeStyle = active ? '#C9B1FF' : '#554488';
+            ctx.lineWidth = 1;
+            this._roundRect(ctx, bx, by, 58, 28, 5);
+            ctx.fill(); ctx.stroke();
+            this.drawText(ctx, w.icon + ' ' + w.label, bx + 29, by + 18, active ? '#FFD070' : w.color, 8, 'center');
+        });
+
+        // Controls hint
+        this.drawText(ctx, '◄ ► change  ↓ close', px + pw / 2, py + ph - 12, 'rgba(180,160,220,0.7)', 8, 'center');
+    },
+
+    _roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    },
+
     renderHUD(ctx) {
         if (this.state === 'intro_black') return;
         const bx = 6, by = 6, bw = 120, bh = 8;
@@ -454,6 +687,10 @@ const Engine = {
             voice_booth: 'Voice Booth', team_arena: 'Team Arena', shogo_bedroom: "Shogo's Room", vedi_house: "Vedi's House"
         };
         this.drawText(ctx, zn[Maps.current] || '', this.W - 8, 14, '#FFE8F0', 8, 'right');
+        // Weather icon + time
+        const wIcons = { clear: '☀', cloudy: '⛅', rain: '🌧', storm: '⛈', night: '🌙' };
+        this.drawText(ctx, (wIcons[this.weather] || '') + ' ' + this.getTimeLabel(), this.W - 8, 24, '#FFD070', 8, 'right');
+        this.drawText(ctx, '↑ Phone', this.W - 8, this.H - 14, 'rgba(200,200,220,0.45)', 8, 'right');
 
 
         // Interaction indicator

@@ -53,6 +53,7 @@ const Player = {
     // === UPDATE ===
     update(dt) {
         if (Engine.state !== 'playing' && Engine.state !== 'swimming' && Engine.state !== 'intro_wake') return;
+        if (Engine.phoneOpen) return; // Freeze player when phone is open
 
         // Track Shift for running
         this.running = !!(Engine.keys['Shift'] || Engine.keys['ShiftLeft'] || Engine.keys['ShiftRight']);
