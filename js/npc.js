@@ -161,6 +161,7 @@ const NPC = {
             const helped = Player.helpedNPCs.has(npc.id);
             return {
                 y: npc.y, render: () => {
+                    if (npc.id === 'vedi' && Vehicles.vediPassenger) return; // Hide Vedi if she's a passenger
                     const sx = npc.x * TILE - Math.round(camX);
                     const sy = npc.y * TILE - Math.round(camY);
                     const key = `${npc.sprite}_${npc.dir}`;

@@ -51,6 +51,7 @@ const Vehicles = {
         this.py = vehicle.y * TILE;
         this.dir = vehicle.dir;
 
+        Engine.state = 'driving';
         Player.setState('driving');
         Player.x = this.x;
         Player.y = this.y;
@@ -77,6 +78,7 @@ const Vehicles = {
         });
 
         this.riding = false;
+        Engine.state = 'playing';
         Player.x = rx;
         Player.y = ry;
         Player.px = rx * TILE;
@@ -99,10 +101,10 @@ const Vehicles = {
         let moved = false;
         let dx = 0, dy = 0;
 
-        if (Engine.keys['ArrowUp'] || Engine.keys['w'] || Engine.keys['W']) { dy = -1; this.dir = 'up'; moved = true; }
-        else if (Engine.keys['ArrowDown'] || Engine.keys['s'] || Engine.keys['S']) { dy = 1; this.dir = 'down'; moved = true; }
-        else if (Engine.keys['ArrowLeft'] || Engine.keys['a'] || Engine.keys['A']) { dx = -1; this.dir = 'left'; moved = true; }
-        else if (Engine.keys['ArrowRight'] || Engine.keys['d'] || Engine.keys['D']) { dx = 1; this.dir = 'right'; moved = true; }
+        if (Engine.keys['ArrowUp'] || Engine.keys['w'] || Engine.keys['W']) { dy = -1; this.dir = 'up'; Player.dir = 'up'; moved = true; }
+        else if (Engine.keys['ArrowDown'] || Engine.keys['s'] || Engine.keys['S']) { dy = 1; this.dir = 'down'; Player.dir = 'down'; moved = true; }
+        else if (Engine.keys['ArrowLeft'] || Engine.keys['a'] || Engine.keys['A']) { dx = -1; this.dir = 'left'; Player.dir = 'left'; moved = true; }
+        else if (Engine.keys['ArrowRight'] || Engine.keys['d'] || Engine.keys['D']) { dx = 1; this.dir = 'right'; Player.dir = 'right'; moved = true; }
 
         if (moved) {
             const mag = Math.sqrt(dx * dx + dy * dy);
@@ -145,7 +147,35 @@ const Vehicles = {
             const sy = Math.round(this.py - camY);
             const spriteKey = `vehicle_${this.type}_${this.dir}`;
             const sprite = Sprites.vehicles?.[spriteKey];
-            if (sprite) ctx.drawImage(sprite, sx, sy - 4);
+            
+            if (sprite) {
+                if(this.type === 'car') {
+                    // Offset for 32x32 car sprite to center on 16x16 tile
+                    ctx.drawImage(sprite, sx - 8, sy - 10);
+                } else {
+                    ctx.drawImage(sprite, sx, sy - 4);
+                }
+            }
+
+            // Draw Shogo on top of vehicle
+            const shogoKey = Player.getSprite();
+            const shogoSprite = Sprites.chars[shogoKey];
+            if (shogoSprite) {
+                // Offset Shogo slightly differently based on vehicle type
+                // For car, Shogo should be slightly higher to look like sitting inside
+                const ox = 0, oy = (this.type === 'scooty' ? -6 : -6);
+                ctx.drawImage(shogoSprite, sx + ox, sy + oy);
+            }
+
+            // Draw Vedi if passenger
+            if (this.vediPassenger) {
+                const vediSprite = Sprites.chars[`vedi_${this.dir}`];
+                if (vediSprite) {
+                    const vx = (this.type === 'scooty' ? (this.dir === 'up' || this.dir === 'down' ? 0 : (this.dir === 'left' ? 4 : -4)) : (this.dir === 'left' || this.dir === 'right' ? 4 : 4));
+                    const vy = (this.type === 'scooty' ? 2 : -6);
+                    ctx.drawImage(vediSprite, sx + vx, sy + vy);
+                }
+            }
         }
     },
 
@@ -158,15 +188,17 @@ const Vehicles = {
     },
 
     interact(vehicle) {
-        // Shared ride logic
-        const vedi = NPC.getNPC(Maps.current, vehicle.x - 1, vehicle.y) ||
-            NPC.getNPC(Maps.current, vehicle.x + 1, vehicle.y) ||
-            NPC.getNPC(Maps.current, vehicle.x, vehicle.y - 1) ||
-            NPC.getNPC(Maps.current, vehicle.x, vehicle.y + 1) ||
+        // Shared ride logic: Find Vedi within 5 tiles
+        const map = Maps.data[Maps.current];
+        const vedi = (map?.npcs?.find(n => n.id === 'vedi' && Math.abs(n.x - vehicle.x) <= 5 && Math.abs(n.y - vehicle.y) <= 5)) ||
             (Quests.companionNPC && Quests.companionNPC.id === 'vedi' ? Quests.companionNPC : null);
 
         if (vedi && vedi.id === 'vedi' && !this.vediPassenger) {
             Dialogue.show("Do you want Vedi to sit with you?", ["Yes!", "No, just me."], "Vedi", (idx) => {
+                // Prevent immediate re-trigger of interaction by clearing the key or adding a small cooldown
+                Engine.keys['e'] = false; 
+                Engine.keys['E'] = false;
+                
                 if (idx === 0) {
                     this.vediPassenger = true;
                     this.mount(vehicle);
@@ -178,5 +210,30 @@ const Vehicles = {
         } else {
             this.mount(vehicle);
         }
-    }
+    },
+
+    togglePassenger() {
+        if (!this.riding) return;
+
+        // If already has passenger, drop them off?
+        if (this.vediPassenger) {
+            this.vediPassenger = false;
+            Engine.showToast("Vedi hopped off.");
+            AudioManager.playClick();
+            return;
+        }
+
+        // Search for Vedi nearby - Check by sprite name or id
+        const map = Maps.data[Maps.current];
+        const vedi = (map?.npcs?.find(n => (n.id.includes('vedi') || n.sprite === 'vedi') && Math.abs(n.x - this.x) <= 4 && Math.abs(n.y - this.y) <= 4)) ||
+            (Quests.companionNPC && Quests.companionNPC.id.includes('vedi') ? Quests.companionNPC : null);
+
+        if (vedi) {
+             this.vediPassenger = true;
+             Engine.showToast("Vedi hopped on!");
+             AudioManager.playSuccess();
+        } else {
+            Engine.showToast("No one nearby to ride with.");
+        }
+    },
 };

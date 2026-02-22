@@ -261,13 +261,13 @@ const Maps = {
             ],
             doors: [
                 { x: 5, y: 5, target: 'shogo_house_f1', spawnX: 4, spawnY: 7 },
-                // South transition to highway
-                { x: 10, y: 24, target: 'mhow_highway', spawnX: 10, spawnY: 2, condition: (p) => Vehicles.riding },
-                { x: 11, y: 24, target: 'mhow_highway', spawnX: 11, spawnY: 2, condition: (p) => Vehicles.riding },
-                { x: 12, y: 24, target: 'mhow_highway', spawnX: 12, spawnY: 2, condition: (p) => Vehicles.riding },
+                // East transition to highway (Mhow)
+                { x: 29, y: 13, target: 'mhow_highway', spawnX: 1, spawnY: 4 },
+                { x: 29, y: 14, target: 'mhow_highway', spawnX: 1, spawnY: 4 },
+                { x: 29, y: 15, target: 'mhow_highway', spawnX: 1, spawnY: 4 },
             ],
             signs: [
-                { x: 15, y: 17, text: 'Mhow Highway →\n(Drive south to travel)' },
+                { x: 25, y: 11, text: 'Mhow Highway →\n(Drive safely!)' },
             ],
             playerStart: { x: 12, y: 11 },
         },
@@ -310,13 +310,15 @@ const Maps = {
             ],
             npcs: [],
             doors: [
-                { x: 10, y: 0, target: 'mridula_bhawan', spawnX: 10, spawnY: 22 },
-                { x: 11, y: 0, target: 'mridula_bhawan', spawnX: 11, spawnY: 22 },
+                { x: 0, y: 3, target: 'mridula_bhawan', spawnX: 28, spawnY: 13 },
+                { x: 0, y: 4, target: 'mridula_bhawan', spawnX: 28, spawnY: 14 },
+                { x: 0, y: 5, target: 'mridula_bhawan', spawnX: 28, spawnY: 15 },
+                { x: 0, y: 6, target: 'mridula_bhawan', spawnX: 28, spawnY: 16 },
             ],
             signs: [
-                { x: 50, y: 8, text: 'Mhow →\n(Coming soon)' },
+                { x: 50, y: 8, text: 'Mhow →\n(Almost there...)' },
             ],
-            playerStart: { x: 5, y: 5 },
+            playerStart: { x: 2, y: 4 },
         },
     },
 

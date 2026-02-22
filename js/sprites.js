@@ -368,30 +368,106 @@ const Sprites = {
         });
     },
 
+    // Draw vehicle sprites
     drawVehicle(ctx, type, dir) {
-        const S = 16;
         if (type === 'scooty') {
-            ctx.fillStyle = '#e86060'; // Red scooty
+            const body = '#e86060'; const seat = '#333'; const handle = '#bbb'; const wheel = '#222';
             if (dir === 'up' || dir === 'down') {
-                ctx.fillRect(5, 2, 6, 12); // body
-                ctx.fillStyle = '#333'; ctx.fillRect(6, 4, 4, 6); // seat
-                ctx.fillStyle = '#888'; ctx.fillRect(4, 3, 8, 1); // handlebars
+                ctx.fillStyle = wheel; ctx.fillRect(7, 12, 2, 3); // Rear wheel
+                
+                if(dir === 'down') {
+                     ctx.fillStyle = handle; ctx.fillRect(4, 4, 8, 1);
+                     ctx.fillStyle = body; ctx.fillRect(6, 5, 4, 8); // Body
+                     ctx.fillStyle = seat; ctx.fillRect(5, 8, 6, 3);
+                     ctx.fillStyle = '#eebb44'; ctx.fillRect(7, 6, 2, 2); // Headlight
+                } else {
+                     ctx.fillStyle = body; ctx.fillRect(6, 5, 4, 8);
+                     ctx.fillStyle = seat; ctx.fillRect(5, 8, 6, 3);
+                     ctx.fillStyle = handle; ctx.fillRect(5, 4, 6, 1);
+                     ctx.fillStyle = '#aa2222'; ctx.fillRect(6, 12, 4, 1); // Taillight
+                }
             } else {
-                ctx.fillRect(2, 5, 12, 6); // body
-                ctx.fillStyle = '#333'; ctx.fillRect(4, 6, 6, 4); // seat
-                ctx.fillStyle = '#888'; ctx.fillRect(10, 4, 1, 8); // handlebars
+                ctx.fillStyle = wheel;
+                // Side wheels
+                if(dir === 'left') {
+                   ctx.fillRect(3, 10, 3, 3); ctx.fillRect(10, 10, 3, 3);
+                } else {
+                   ctx.fillRect(3, 10, 3, 3); ctx.fillRect(10, 10, 3, 3);
+                }
+                
+                ctx.fillStyle = body; ctx.fillRect(3, 7, 10, 4);
+                ctx.fillStyle = seat; ctx.fillRect(5, 6, 6, 2);
+                ctx.fillStyle = handle;
+                if (dir === 'right') {
+                   ctx.fillRect(11, 5, 2, 4); 
+                   ctx.fillStyle = '#eebb44'; ctx.fillRect(13, 6, 1, 2);
+                } else {
+                   ctx.fillRect(3, 5, 2, 4);
+                   ctx.fillStyle = '#eebb44'; ctx.fillRect(2, 6, 1, 2);
+                }
             }
         } else if (type === 'car') {
-            ctx.fillStyle = '#5078a8'; // Blue car
-            if (dir === 'up' || dir === 'down') {
-                ctx.fillRect(3, 1, 10, 14); // body
-                ctx.fillStyle = '#88aadd'; ctx.fillRect(4, 3, 8, 4); // windshield
-                ctx.fillStyle = '#333'; ctx.fillRect(2, 3, 1, 3); ctx.fillRect(13, 3, 1, 3); // wheels
-            } else {
-                ctx.fillRect(1, 3, 14, 10); // body
-                ctx.fillStyle = '#88aadd'; ctx.fillRect(3, 4, 4, 8); // windshield
-                ctx.fillStyle = '#333'; ctx.fillRect(3, 2, 3, 1); ctx.fillRect(3, 13, 3, 1); // wheels
-            }
+             // Larger car for 32x32 (approx 20x28 looks pleasing)
+             const col = '#5078a8'; const win = '#88aadd';
+             
+             // Center offset
+             const ox = 6, oy = 2;
+
+             if (dir === 'up' || dir === 'down') {
+                 // Wheels
+                 ctx.fillStyle = '#222'; 
+                 ctx.fillRect(ox + 0, oy + 4, 3, 5); ctx.fillRect(ox + 17, oy + 4, 3, 5); 
+                 ctx.fillRect(ox + 0, oy + 19, 3, 5); ctx.fillRect(ox + 17, oy + 19, 3, 5); 
+                 
+                 // Body
+                 ctx.fillStyle = col; 
+                 ctx.fillRect(ox + 2, oy + 0, 16, 28);
+                 
+                 // Windows
+                 ctx.fillStyle = win; 
+                 ctx.fillRect(ox + 3, oy + 6, 14, 6); // Front/Back window
+                 ctx.fillRect(ox + 3, oy + 18, 14, 4); // Other window
+                 
+                 if(dir === 'down') {
+                     // Headlights
+                     ctx.fillStyle = '#eebb44'; 
+                     ctx.fillRect(ox + 3, oy + 26, 3, 2); ctx.fillRect(ox + 14, oy + 26, 3, 2); 
+                     // Roof shading
+                     ctx.fillStyle = '#406088'; ctx.fillRect(ox + 3, oy + 13, 14, 4);
+                 } else {
+                     // Tail lights
+                     ctx.fillStyle = '#cc2222'; 
+                     ctx.fillRect(ox + 3, oy + 26, 3, 2); ctx.fillRect(ox + 14, oy + 26, 3, 2); 
+                      // Roof shading
+                     ctx.fillStyle = '#406088'; ctx.fillRect(ox + 3, oy + 13, 14, 4);
+                 }
+             } else {
+                 // Creating a sideways car is tricky in 2D top down, making it longer
+                 // Wheels
+                 ctx.fillStyle = '#222'; 
+                 ctx.fillRect(ox + 4, oy + 17, 5, 3); ctx.fillRect(ox + 19, oy + 17, 5, 3); 
+                 
+                 // Body
+                 ctx.fillStyle = col; 
+                 // Side profile
+                 ctx.fillRect(ox + 0, oy + 6, 28, 14);
+                 
+                 // Windows (Side view)
+                 ctx.fillStyle = win; 
+                 ctx.fillRect(ox + 4, oy + 5, 9, 6); ctx.fillRect(ox + 15, oy + 5, 9, 6);
+
+                 if(dir === 'right') {
+                     // Headlights
+                     ctx.fillStyle = '#eebb44'; ctx.fillRect(ox + 26, oy + 8, 2, 4);
+                     // Taillights
+                     ctx.fillStyle = '#cc2222'; ctx.fillRect(ox + 0, oy + 8, 2, 4);
+                 } else {
+                     // Headlights
+                     ctx.fillStyle = '#eebb44'; ctx.fillRect(ox + 0, oy + 8, 2, 4);
+                     // Taillights
+                     ctx.fillStyle = '#cc2222'; ctx.fillRect(ox + 26, oy + 8, 2, 4);
+                 }
+             }
         }
     },
 
@@ -399,9 +475,16 @@ const Sprites = {
         const S = 16;
         this.vehicles = {};
 
-        ['scooty', 'car'].forEach(type => {
+        ['scooty'].forEach(type => {
             ['down', 'up', 'left', 'right'].forEach(dir => {
                 this.vehicles[`vehicle_${type}_${dir}`] = this.make(S, S, ctx => this.drawVehicle(ctx, type, dir));
+            });
+        });
+
+        // Cars are larger (32x32)
+        ['car'].forEach(type => {
+            ['down', 'up', 'left', 'right'].forEach(dir => {
+                this.vehicles[`vehicle_${type}_${dir}`] = this.make(32, 32, ctx => this.drawVehicle(ctx, type, dir));
             });
         });
     },
@@ -473,6 +556,24 @@ const Sprites = {
                 ctx.fillStyle = P.skirt; ctx.fillRect(3, 12, 10, 2);
                 ctx.fillStyle = P.skin; ctx.fillRect(5, 14, 2, 2); ctx.fillRect(9, 14, 2, 2); // legs out
                 return;
+            }
+
+            if (state === 'sitting') {
+                 // Sitting pose
+                 ctx.save();
+                 // If this is intended to be on a chair/bench/vehicle, shift up to show object below
+                 // But wait, if on ground, floating is bad.
+                 // Let's just draw standard sitting.
+                 // If on vehicle, we need to handle offset in Player.render.
+                 ctx.fillStyle = P.hair; ctx.fillRect(4, 2, 8, 6);
+                 ctx.fillStyle = P.skin; ctx.fillRect(4, 4, 8, 4);
+                 ctx.fillStyle = P.shirt; ctx.fillRect(4, 8, 8, 4);
+                 ctx.fillStyle = P.skirt; ctx.fillRect(3, 12, 10, 2);
+                 if(dir === 'down' || dir === 'up') {
+                    ctx.fillStyle = P.skin; ctx.fillRect(5, 14, 2, 2); ctx.fillRect(9, 14, 2, 2); 
+                 }
+                 ctx.restore();
+                 return;
             }
 
             const lo = (state === 'walk' || state === 'run') ? (frame === 1 ? 1 : frame === 3 ? -1 : 0) : 0;

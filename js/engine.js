@@ -93,6 +93,15 @@ const Engine = {
             if (e.key === 'q' || e.key === 'Q') {
                 if (['playing', 'swimming', 'driving', 'questlog'].includes(this.state)) Quests.toggleLog();
             }
+            if (e.key === 'q' || e.key === 'Q') {
+                if (['playing', 'swimming', 'driving', 'questlog'].includes(this.state)) Quests.toggleLog();
+            }
+            if (e.key === 'l' || e.key === 'L') {
+                 if (this.state === 'driving') {
+                     // L key while driving tries to toggle passenger
+                     Vehicles.togglePassenger();
+                 }
+            }
             if (e.key === 'Escape' && this.state === 'questlog') Quests.toggleLog();
             if (e.key === 'm' || e.key === 'M') {
                 if (['playing', 'swimming', 'driving', 'worldmap'].includes(this.state)) this.toggleWorldMap();
@@ -440,34 +449,89 @@ const Engine = {
         };
         this.drawText(ctx, zn[Maps.current] || '', this.W - 8, 14, '#FFE8F0', 8, 'right');
 
+
         // Interaction indicator
-        if ((this.state === 'playing' || this.state === 'swimming' || this.state === 'driving') && !Player.moving) {
+        // Relax strict movement check for driving so prompt appears more reliably
+        const movingCheck = (this.state === 'driving') ? true : !Player.moving;
+        
+        if ((this.state === 'playing' || this.state === 'swimming' || this.state === 'driving') && movingCheck) {
             const v = Vehicles.checkNearby();
             const ft = Player.getFacingTile();
+            
+            // Check entities at facing tile
             const hasNPC = Maps.getNPC(Maps.current, ft.x, ft.y);
+            // Also check current tile for NPC (overlapping)
+            const overlapNPC = Maps.getNPC(Maps.current, Player.x, Player.y); 
+            const targetNPC = hasNPC || overlapNPC;
+            
             const hasSign = Maps.getSign(Maps.current, ft.x, ft.y);
             const hasInteract = Maps.getInteractable(Maps.current, ft.x, ft.y);
             const hasAnimal = Maps.getAnimal(Maps.current, ft.x, ft.y);
 
-            if (v || hasNPC || hasSign || hasInteract || hasAnimal) {
+            if (v || targetNPC || hasSign || hasInteract || hasAnimal) {
                 const cx = Math.round(this.camX), cy = Math.round(this.camY);
+                // Use vehicle position if riding/parked involving vehicle
                 const tx = v ? v.x : ft.x, ty = v ? v.y : ft.y;
-                const ix = Math.round(tx * TILE - cx) + 8;
-                const iy = Math.round(ty * TILE - cy) - 8 + Math.round(Math.sin(this.time * 4) * 3);
+                
+                // If targeting an NPC, use their position specifically for the prompt
+                const px = targetNPC ? targetNPC.x : tx;
+                const py = targetNPC ? targetNPC.y : ty;
+                
+                const ix = Math.round(px * TILE - cx) + 8;
+                const iy = Math.round(py * TILE - cy) - 8 + Math.round(Math.sin(this.time * 4) * 3);
+                
                 this.drawText(ctx, '!', ix, iy, '#FFD070', 8, 'center');
                 ctx.fillStyle = 'rgba(20,15,30,0.85)'; ctx.fillRect(this.W / 2 - 55, this.H - 22, 110, 18);
                 ctx.strokeStyle = '#FFD070'; ctx.lineWidth = 1; ctx.strokeRect(this.W / 2 - 55, this.H - 22, 110, 18);
 
                 let label = '[E] Look';
-                if (v) label = `[E] Use ${v.type}`;
+                if (v) label = `[E] Ride ${v.type.charAt(0).toUpperCase() + v.type.slice(1)}`;
                 else if (hasAnimal) label = '[E] Pet';
-                else if (hasNPC) label = '[E] Talk';
-
+                
+                // --- CUSTOM NPC LABEL LOGIC ---
+                else if (targetNPC) {
+                    label = `[E] Talk`;
+                    // If the NPC is Vedi and we're driving, show prompt to pick up!
+                    if (this.state === 'driving' && targetNPC.id === 'vedi') {
+                        label = `[L] Ride w/ Vedi`;
+                    }
+                }
+                
                 this.drawText(ctx, label, this.W / 2, this.H - 8, '#FFD070', 8, 'center');
+            } 
+            
+            // Check for Vedi pickup while driving (independent of facing direction)
+            if (this.state === 'driving') {
+                 // Always check for Vedi when driving
+                 const map = Maps.data[Maps.current];
+                 // Find vedi by ID or Sprite name (since ID might vary like 'vedi_home')
+                 const vedi = (map?.npcs?.find(n => n.id.includes('vedi') || n.sprite === 'vedi')) || 
+                              (Quests.companionNPC && Quests.companionNPC.id.includes('vedi') ? Quests.companionNPC : null);
+                 
+                 // Don't show if we already have the passenger
+                 if(!Vehicles.vediPassenger && vedi && Math.abs(vedi.x - Player.x) <= 5 && Math.abs(vedi.y - Player.y) <= 5) {
+                     // Draw indicator on Vedi
+                     const cx = Math.round(this.camX), cy = Math.round(this.camY);
+                     const ix = Math.round(vedi.x * TILE - cx) + 8;
+                     const iy = Math.round(vedi.y * TILE - cy) - 16 + Math.round(Math.sin(this.time * 4) * 3);
+                     
+                     this.drawText(ctx, '!', ix, iy, '#FFD070', 8, 'center');
+                     
+                     // Draw prompt at bottom center - ensure we clear previous prompt area first
+                     // This runs after the main interaction check, so we might overwrite the [E] Talk prompt if it exists, which is fine
+                     ctx.fillStyle = 'rgba(20,15,30,0.85)'; ctx.fillRect(this.W / 2 - 60, this.H - 22, 120, 18);
+                     ctx.strokeStyle = '#FFD070'; ctx.lineWidth = 1; ctx.strokeRect(this.W / 2 - 60, this.H - 22, 120, 18);
+                     this.drawText(ctx, `[L] Pick up Vedi`, this.W / 2, this.H - 8, '#FFD070', 8, 'center');
+                 }
             }
         }
 
-        this.drawText(ctx, '[Q] Quests  [M] Map', this.W - 8, this.H - 6, 'rgba(200,200,220,0.5)', 8, 'right');
+        // Draw permanent HUD controls at the bottom right
+        // this.drawText(ctx, '[Q] Quests  [L] Passenger  [M] Map', this.W - 8, this.H - 6, 'rgba(200,200,220,0.5)', 8, 'right');
+        // Only show relevant controls
+        let hudText = '[Q] Quests  [M] Map';
+        if (Vehicles.vediPassenger) hudText += '  [L] Drop Vedi';
+        this.drawText(ctx, hudText, this.W - 8, this.H - 6, 'rgba(200,200,220,0.5)', 8, 'right');
     },
 
     renderMinimap(ctx) {

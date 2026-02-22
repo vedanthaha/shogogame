@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            background: #333;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        canvas {
+            image-rendering: pixelated;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="c"></canvas>
+    <script>
+        const img = new Image();
+        img.src = 'assets/tilesets/rpg-urban/Tilemap/tilemap_packed.png';
+        img.onload = () => {
+            const c = document.getElementById('c');
+            const ctx = c.getContext('2d');
+            const scale = 3;
+            c.width = img.width * scale;
+            c.height = img.height * scale;
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, 0, 0, c.width, c.height);
+
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 1;
+            ctx.font = "10px monospace";
+            ctx.fillStyle = "rgba(255,255,0,0.8)";
+
+            const W = img.width / 16;
+            const H = img.height / 16;
+
+            for (let y = 0; y < H; y++) {
+                for (let x = 0; x < W; x++) {
+                    ctx.strokeRect(x * 16 * scale, y * 16 * scale, 16 * scale, 16 * scale);
+                    ctx.fillText(`${x},${y}`, x * 16 * scale + 2, y * 16 * scale + 12);
+                }
+            }
+        };
+    </script>
+</body>
+
+</html>

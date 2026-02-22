@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            background: #333;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            font-family: sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .atlas {
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            background: #ff00ff;
+            image-rendering: pixelated;
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="cont"></div>
+    <script>
+        const imgs = [
+            'assets/tilesets/sprout-lands/addons/sprout_lands_tilemap/assets/Tilesets/Grass.png',
+            'assets/tilesets/sprout-lands/addons/sprout_lands_tilemap/assets/Objects/Paths.png',
+            'assets/tilesets/sprout-lands/addons/sprout_lands_tilemap/assets/Tilesets/Water.png',
+            'assets/tilesets/sprout-lands/addons/sprout_lands_tilemap/assets/Tilesets/Wooden House.png',
+            'assets/tilesets/sprout-lands/addons/sprout_lands_tilemap/assets/Objects/Basic Grass Biom things 1.png'
+        ];
+
+        imgs.forEach(src => {
+            const img = new Image();
+            img.src = src;
+            img.onload = () => {
+                const div = document.createElement('div');
+                div.className = 'atlas';
+                div.innerHTML = `<h3>${src.split('/').pop()}</h3>`;
+                const c = document.createElement('canvas');
+                const scale = 2;
+                c.width = img.width * scale; c.height = img.height * scale;
+                const ctx = c.getContext('2d');
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(img, 0, 0, c.width, c.height);
+
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+                ctx.lineWidth = 1;
+                ctx.font = '10px monospace';
+                ctx.fillStyle = 'rgba(255,255,0,0.8)';
+
+                const W = img.width / 16;
+                const H = img.height / 16;
+
+                for (let y = 0; y < H; y++) {
+                    for (let x = 0; x < W; x++) {
+                        ctx.strokeRect(x * 16 * scale, y * 16 * scale, 16 * scale, 16 * scale);
+                        ctx.fillText(`${x},${y}`, x * 16 * scale + 2, y * 16 * scale + 12);
+                    }
+                }
+                div.appendChild(c);
+                document.getElementById('cont').appendChild(div);
+            };
+        });
+    </script>
+</body>
+
+</html>

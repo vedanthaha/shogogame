@@ -204,6 +204,17 @@ const Player = {
         if (g === 'G' || g === 'F') { this.sitDown(); return; }
     },
 
+    sit() {
+        // If riding a vehicle, sit acts as dismount
+        if (Engine.state === 'driving') {
+             Vehicles.dismount();
+             return;
+        }
+        
+        if (Engine.state !== 'playing') return;
+        this.sitDown();
+    },
+
     sitDown() {
         this.setState('sit');
         Engine.state = 'sitting';
@@ -212,6 +223,11 @@ const Player = {
             "Just breathing...", "Small things matter.",
             "This is enough.", "I like it here.",
         ];
+        // Check if sitting on a parked vehicle
+        const v = Vehicles.checkNearby(); 
+        // Logic: if on top of a parked vehicle, we are technically 'sitting' on it visually.
+        // The vehicle remains in 'parked' list so it renders. 
+        // The player renders on top.
         Engine.showToast(thoughts[Math.floor(Math.random() * thoughts.length)]);
     },
 
@@ -224,8 +240,25 @@ const Player = {
 
     // === RENDER (16×16 at tile position) ===
     render(ctx, camX, camY) {
-        const sx = Math.round(this.px - camX);
-        const sy = Math.round(this.py - camY);
+        if (Vehicles.riding) return; // Hide player sprite from here when riding, handled by vehicle
+        
+        let sx = Math.round(this.px - camX);
+        let sy = Math.round(this.py - camY);
+
+        // Visual fix: If sitting on a vehicle/bench, lift up slightly
+        if (this.animState === 'sit') {
+            // Find if we are sitting ON a vehicle
+            const parked = Vehicles.parked[Maps.current] || [];
+            const v = parked.find(pv => pv.x === this.x && pv.y === this.y);
+            
+            // Also check for bench 'b'
+            const obj = Maps.getObject(Maps.current, this.x, this.y);
+            
+            if (v || obj === 'b') {
+                sy -= 5; // Lift up to show vehicle/bench underneath
+            }
+        }
+
         const key = this.getSprite();
         const sprite = Sprites.chars[key];
         if (sprite) ctx.drawImage(sprite, sx, sy);
