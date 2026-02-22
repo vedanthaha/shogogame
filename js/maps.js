@@ -70,8 +70,15 @@ const Maps = {
                 { x: 4, y: 7, target: 'mridula_bhawan', spawnX: 5, spawnY: 6 }
             ],
             signs: [],
-            interactables: [],
-            playerStart: { x: 4, y: 7 },
+            interactables: [
+                 { x: 12, y: 8, text: "Luna's easel. It's covered in colorful splotches." },
+                 { x: 28, y: 11, text: "Kai seems to be deep in thought." },
+                 { x: 18, y: 19, text: "The flowers here smell amazing." },
+                 { x: 25, y: 18, text: "A wooden bridge. The water flows gently underneath." },
+                 { x: 38, y: 18, text: "Team Arena. A place to build trust." },
+                 { x: 8, y: 6, text: "Comfort Town map. You are here." }
+            ],
+            playerStart: { x: 7, y: 25 },
         },
 
         // ====== OVERWORLD (expanded) ======
@@ -120,7 +127,7 @@ const Maps = {
                 { id: 'kai', sprite: 'kai', x: 28, y: 11, dir: 'down', dialogue: 'kai_greet', name: 'Kai' },
                 { id: 'mira', sprite: 'mira', x: 18, y: 19, dir: 'left', dialogue: 'mira_greet', name: 'Mira' },
                 { id: 'rex', sprite: 'rex', x: 33, y: 6, dir: 'down', dialogue: 'rex_greet', name: 'Rex' },
-                { id: 'vedi', sprite: 'vedi', x: 12, y: 26, dir: 'down', dialogue: 'vedi_greet', name: 'Vedi' },
+                // Vedi removed from overworld to avoid duplicate with vedi_meetup quest spawning logic
             ],
             doors: [
                 { x: 9, y: 5, target: 'comfort_house', spawnX: 5, spawnY: 7 },
@@ -257,7 +264,8 @@ const Maps = {
                 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG',
             ],
             npcs: [
-                { id: 'vedi_home', sprite: 'vedi', x: 23, y: 11, dir: 'down', dialogue: 'vedi_residential', name: 'Vedi' },
+                // Vedi removed here too to prevent static duplicate. 
+                // She should appear dynamically based on quest state or be in her house/overworld only.
             ],
             doors: [
                 { x: 5, y: 5, target: 'shogo_house_f1', spawnX: 4, spawnY: 7 },

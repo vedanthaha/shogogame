@@ -145,6 +145,10 @@ const Quests = {
             if (step.type === 'visit') {
                 const r = step.radius || 1;
                 if (step.map === mapId && Math.abs(x - step.x) <= r && Math.abs(y - step.y) <= r) {
+                    
+                     // Check conditions (like passenger)
+                     if (step.condition === 'passenger_vedi' && !Vehicles.vediPassenger) return false;
+
                     // Location reached
                     if (step.dialogue) {
                         // Show dialogue then advance
@@ -152,8 +156,15 @@ const Quests = {
                         const speaker = quest.type === 'shared' ? 'Vedi' : '';
                         Dialogue.show(
                             dlg?.text || 'You found the spot!',
-                            null, speaker,
-                            () => this.advanceStep(entry.id)
+                            dlg?.choices?.map(c => c.label) || null,
+                            speaker,
+                            (idx) => {
+                                if(dlg?.choices && dlg.choices[idx]?.response) {
+                                    Dialogue.show(dlg.choices[idx].response, null, speaker, () => this.advanceStep(entry.id));
+                                } else {
+                                    this.advanceStep(entry.id);
+                                }
+                            }
                         );
                     } else {
                         Engine.showToast('Found it!');
@@ -162,6 +173,29 @@ const Quests = {
                     return true;
                 }
             }
+// ...existing code...
+        }
+        return false;
+    },
+    
+    // Check interaction (PC, Plant, etc)
+    checkInteract(mapId, x, y) {
+         for (const entry of this.active) {
+            const quest = this.data[entry.id];
+            if (!quest) continue;
+            const step = quest.steps[entry.currentStep];
+            if (!step) continue;
+
+            if (step.type === 'interact') {
+                if (step.map === mapId && step.x === x && step.y === y) {
+                     Engine.showToast(step.hint + '... Done!');
+                     this.advanceStep(entry.id);
+                     return true;
+                }
+            }
+         }
+         return false;
+    },
 
             if (step.type === 'visit_tile') {
                 const ground = Maps.getGround(mapId, x, y);

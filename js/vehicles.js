@@ -51,6 +51,13 @@ const Vehicles = {
         this.py = vehicle.y * TILE;
         this.dir = vehicle.dir;
 
+        // If carrying passenger, hide the map NPC
+        if(this.vediPassenger) {
+             const map = Maps.data[Maps.current];
+             const vedi = map?.npcs?.find(n => n.id.includes('vedi') || n.sprite === 'vedi');
+             if(vedi) vedi.hidden = true;
+        }
+
         Engine.state = 'driving';
         Player.setState('driving');
         Player.x = this.x;
@@ -87,6 +94,17 @@ const Vehicles = {
 
         if (this.vediPassenger) {
             this.vediPassenger = false;
+            // Respawn Vedi NPC at exit point
+            const map = Maps.data[Maps.current];
+            const vedi = map?.npcs?.find(n => n.id.includes('vedi') || n.sprite === 'vedi');
+            if(vedi) {
+                 vedi.hidden = false;
+                 // Place her slightly to the side
+                 vedi.x = rx + (this.dir === 'left' ? 1 : -1); 
+                 vedi.y = ry;
+                 vedi.dir = (this.dir === 'up' ? 'down' : 'up'); // face player
+            }
+
             Memory.set('drove_with_vedi');
             Engine.showToast('Vedi stepped off.');
         }
@@ -231,6 +249,9 @@ const Vehicles = {
 
         if (vedi) {
              this.vediPassenger = true;
+             // Hide map NPC immediately
+             vedi.hidden = true; 
+             
              Engine.showToast("Vedi hopped on!");
              AudioManager.playSuccess();
         } else {

@@ -1,267 +1,86 @@
 {
-    "vedi_ride": {
-        "title": "Highway Breeze",
+    "shogo_morning": {
+        "title": "A Gentle Start",
+        "giver": "shogo",
+        "type": "normal",
+        "description": "Start the day with small acts of care.",
+        "prereq": null,
+        "steps": [
+            { "type": "interact", "map": "shogo_bedroom", "x": 5, "y": 5, "hint": "Check your PC messages" },
+            { "type": "interact", "map": "shogo_bedroom", "x": 1, "y": 1, "hint": "Water the plant (it looks thirsty)" },
+            { "type": "interact", "map": "shogo_bedroom", "x": 4, "y": 2, "hint": "Tidy up in the mirror" },
+            { "type": "visit", "map": "shogo_house_f1", "x": 4, "y": 6, "radius": 2, "hint": "Head downstairs" }
+        ],
+        "reward": { "vibe": 10 },
+        "completion": "Shogo: Ready for the day."
+    },
+    "vedi_meetup": {
+        "title": "Best Friend Energy",
         "giver": "vedi",
-        "type": "shared",
-        "description": "Vedi looks bored. Maybe she'd like a ride on the highway?",
-        "prereq": null,
-        "steps": [
-            {
-                "type": "talk_to",
-                "target": "vedi",
-                "dialogue": "vedi_quest_start",
-                "hint": "Talk to Vedi about a ride"
-            },
-            {
-                "type": "visit",
-                "map": "mhow_highway",
-                "x": 55,
-                "y": 12,
-                "radius": 4,
-                "condition": "passenger_vedi",
-                "dialogue": "vedi_highway_chat",
-                "hint": "Drive to the end of Mhow Highway with Vedi"
-            },
-             {
-                "type": "talk_to",
-                "target": "vedi",
-                "dialogue": "vedi_quest_end",
-                "hint": "Talk to Vedi"
-            }
-        ],
-        "reward": {
-            "vibe": 50
-        },
-        "completion": "Vedi smiles. 'That was awesome! Fastest we've ever gone!'"
-    },
-    "luna_art": {
-        "title": "Art From the Heart",
-        "giver": "luna",
         "type": "normal",
-        "description": "Luna found a beautiful spot she wants to show you.",
-        "prereq": null,
+        "description": "Vedi is waiting outside.",
+        "prereq": "shogo_morning",
         "steps": [
-            {
-                "type": "talk_to",
-                "target": "luna",
-                "dialogue": "luna_quest_start",
-                "hint": "Talk to Luna"
-            },
-            {
-                "type": "visit",
-                "map": "overworld",
-                "x": 20,
-                "y": 6,
-                "radius": 2,
-                "hint": "Visit the hilltop garden"
-            },
-            {
-                "type": "return_to",
-                "target": "luna",
-                "dialogue": "luna_quest_done",
-                "hint": "Tell Luna about the view"
-            }
+            { "type": "talk_to", "target": "vedi", "dialogue": "vedi_meetup_start", "hint": "Find Vedi outside" },
+            { "type": "visit", "map": "overworld", "x": 15, "y": 25, "radius": 5, "hint": "Go for a walk with Vedi" }
         ],
-        "reward": {
-            "vibe": 20
-        },
-        "completion": "Luna's eyes light up. 'I knew you'd love it! I'm going to paint it tomorrow.'"
+        "reward": { "vibe": 15 },
+        "completion": "Vedi: Walking is good for us!"
     },
-    "kai_journal": {
-        "title": "Pages of Possibility",
-        "giver": "kai",
-        "type": "normal",
-        "description": "Kai lost his journal somewhere near the path.",
-        "prereq": null,
-        "steps": [
-            {
-                "type": "talk_to",
-                "target": "kai",
-                "dialogue": "kai_quest_start",
-                "hint": "Talk to Kai"
-            },
-            {
-                "type": "visit",
-                "map": "overworld",
-                "x": 10,
-                "y": 14,
-                "radius": 2,
-                "hint": "Search near the crossroads"
-            },
-            {
-                "type": "return_to",
-                "target": "kai",
-                "dialogue": "kai_quest_done",
-                "hint": "Bring the journal back to Kai"
-            }
-        ],
-        "reward": {
-            "vibe": 15
-        },
-        "completion": "Kai clutches the journal. 'My thoughts were in there... thank you, Shogo.'"
-    },
-    "mira_flowers": {
-        "title": "Welcome Bouquet",
+    "mira_welcome": {
+        "title": "Neighborly Nudge",
         "giver": "mira",
         "type": "normal",
-        "description": "Mira wants to pick flowers to decorate her new place.",
-        "prereq": null,
+        "description": "Mira is new and shy.",
+        "prereq": "vedi_meetup",
         "steps": [
-            {
-                "type": "talk_to",
-                "target": "mira",
-                "dialogue": "mira_quest_start",
-                "hint": "Talk to Mira"
-            },
-            {
-                "type": "visit_tile",
-                "map": "overworld",
-                "tile": "F",
-                "hint": "Find some flowers in town"
-            },
-            {
-                "type": "visit_tile",
-                "map": "overworld",
-                "tile": "F",
-                "hint": "Find more flowers"
-            },
-            {
-                "type": "return_to",
-                "target": "mira",
-                "dialogue": "mira_quest_done",
-                "hint": "Bring flowers to Mira"
-            }
+            { "type": "talk_to", "target": "mira", "dialogue": "mira_welcome_start", "hint": "Talk to Mira near the flowers" },
+            { "type": "talk_to", "target": "kai", "dialogue": "kai_intro_mira", "hint": "Introduce Mira to Kai" },
+            { "type": "return_to", "target": "mira", "dialogue": "mira_welcome_end", "hint": "Check on Mira" }
         ],
-        "reward": {
-            "vibe": 15
-        },
-        "completion": "Mira beams. 'These are perfect! My room is going to feel like home now.'"
+        "reward": { "vibe": 20 },
+        "completion": "Mira: The town feels smaller now. In a good way."
     },
-    "rex_song": {
-        "title": "Sound Check",
-        "giver": "rex",
+    "vedi_highway_drive": {
+        "title": "The Open Road",
+        "giver": "vedi",
+        "type": "shared",
+        "description": "Vedi wants to feel the wind.",
+        "prereq": "vedi_meetup",
+        "steps": [
+            { "type": "talk_to", "target": "vedi", "dialogue": "vedi_highway_start", "hint": "Talk to Vedi about a drive" },
+            { "type": "visit", "map": "mhow_highway", "x": 55, "y": 4, "radius": 4, "condition": "passenger_vedi", "dialogue": "vedi_highway_mid", "hint": "Drive to the end of the highway with Vedi" },
+            { "type": "talk_to", "target": "vedi", "dialogue": "vedi_highway_end", "hint": "Talk to Vedi" }
+        ],
+        "reward": { "vibe": 30 },
+        "completion": "Vedi: My brain feels clearer. Thanks for driving."
+    },
+    "vedi_sunset_spot": {
+        "title": "Golden Hour",
+        "giver": "vedi",
+        "type": "shared",
+        "description": "Vedi found a perfect view.",
+        "prereq": "vedi_highway_drive",
+        "steps": [
+            { "type": "talk_to", "target": "vedi", "dialogue": "vedi_sunset_start", "hint": "Vedi has an idea" },
+            { "type": "visit", "map": "mhow_highway", "x": 50, "y": 8, "radius": 3, "condition": "passenger_vedi", "hint": "Go to the viewpoint sign" },
+            { "type": "interact", "map": "mhow_highway", "x": 50, "y": 8, "hint": "Sit and watch (Press E)" }
+        ],
+        "reward": { "vibe": 40 },
+        "completion": "Vedi: That was a good show. Thanks, Shogo."
+    },
+    "community_mural": {
+        "title": "Our Mark",
+        "giver": "luna",
         "type": "normal",
-        "description": "Rex needs to hear the sounds of town for inspiration.",
-        "prereq": null,
+        "description": "Luna needs help with the mural.",
+        "prereq": "mira_welcome",
         "steps": [
-            {
-                "type": "talk_to",
-                "target": "rex",
-                "dialogue": "rex_quest_start",
-                "hint": "Talk to Rex"
-            },
-            {
-                "type": "visit",
-                "map": "overworld",
-                "x": 18,
-                "y": 18,
-                "radius": 3,
-                "hint": "Listen to the lake waves"
-            },
-            {
-                "type": "visit",
-                "map": "overworld",
-                "x": 15,
-                "y": 6,
-                "radius": 2,
-                "hint": "Hear the birds in the trees"
-            },
-            {
-                "type": "return_to",
-                "target": "rex",
-                "dialogue": "rex_quest_done",
-                "hint": "Tell Rex what you heard"
-            }
+            { "type": "talk_to", "target": "luna", "dialogue": "mural_start", "hint": "Talk to Luna at Studio" },
+            { "type": "visit_tile", "map": "overworld", "tile": "W", "hint": "Find inspiration near water" },
+            { "type": "return_to", "target": "luna", "dialogue": "mural_end", "hint": "Return to Luna" }
         ],
-        "reward": {
-            "vibe": 20
-        },
-        "completion": "Rex grins. 'Lake waves and birdsong... I can hear a melody already!'"
-    },
-    "vedi_lake": {
-        "title": "Lake Day",
-        "giver": "vedi",
-        "type": "shared",
-        "description": "Vedi wants to explore the lake together.",
-        "prereq": null,
-        "steps": [
-            {
-                "type": "talk_to",
-                "target": "vedi",
-                "dialogue": "vedi_lake_start",
-                "hint": "Meet Vedi"
-            },
-            {
-                "type": "visit",
-                "map": "overworld",
-                "x": 16,
-                "y": 18,
-                "radius": 2,
-                "dialogue": "vedi_lake_walk",
-                "hint": "Walk to the lake with Vedi"
-            },
-            {
-                "type": "visit",
-                "map": "overworld",
-                "x": 20,
-                "y": 20,
-                "radius": 2,
-                "dialogue": "vedi_lake_spot",
-                "hint": "Find a nice spot by the water"
-            },
-            {
-                "type": "talk_to",
-                "target": "vedi",
-                "dialogue": "vedi_lake_done",
-                "hint": "Sit and talk with Vedi"
-            }
-        ],
-        "reward": {
-            "vibe": 30
-        },
-        "completion": "Vedi smiles softly. 'Days like this... I wish they'd last forever.'"
-    },
-    "vedi_stars": {
-        "title": "Stargazing",
-        "giver": "vedi",
-        "type": "shared",
-        "description": "Vedi heard there's a perfect stargazing spot in the hills.",
-        "prereq": "vedi_lake",
-        "steps": [
-            {
-                "type": "talk_to",
-                "target": "vedi",
-                "dialogue": "vedi_stars_start",
-                "hint": "Talk to Vedi"
-            },
-            {
-                "type": "visit",
-                "map": "overworld",
-                "x": 35,
-                "y": 7,
-                "radius": 2,
-                "dialogue": "vedi_stars_hill",
-                "hint": "Climb the eastern hills with Vedi"
-            },
-            {
-                "type": "visit",
-                "map": "overworld",
-                "x": 38,
-                "y": 5,
-                "radius": 2,
-                "dialogue": "vedi_stars_top",
-                "hint": "Reach the hilltop"
-            },
-            {
-                "type": "talk_to",
-                "target": "vedi",
-                "dialogue": "vedi_stars_done",
-                "hint": "Stargaze with Vedi"
-            }
-        ],
-        "reward": {
-            "vibe": 35
-        },
-        "completion": "Vedi leans back. 'Same sky, same stars... but it feels different with you here.'"
+        "reward": { "vibe": 25 },
+        "completion": "Luna: It wouldn't be complete without you."
     }
 }

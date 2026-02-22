@@ -61,6 +61,10 @@ const Dialogue = {
                 // Confirm choice
                 this.active = false;
                 Engine.state = 'playing';
+                
+                // Vibe Gain Logic (if choice object has it)
+                // The callback is passed the index, but we can handle side effects here if we passed objects
+                // For now, simpler to let the callback handle it or just pass the index.
                 if (this.callback) this.callback(this.selectedChoice);
             } else {
                 // Close dialogue
@@ -87,29 +91,45 @@ const Dialogue = {
     render(ctx, W, H) {
         if (!this.active) return;
 
-        const boxH = this.choices ? 100 : 64;
-        const boxY = H - boxH - 6;
+        // Dynamic box height based on text length + choices
+        // Measure text first to decide height? 
+        // For pixel art, simpler to just have flexible height or fixed large box.
+        
         const boxX = 6;
         const boxW = W - 12;
+        
+        // Calculate needed height
+        const maxChars = Math.floor((boxW - 20) / 7); // Approx 7px per char width
+        const lines = this.wrapText(this.displayedText, maxChars);
+        const textH = Math.max(3, lines.length) * 12;
+        const choiceH = this.choices ? (this.choices.length * 14 + 6) : 0;
+        const totalH = 20 + textH + choiceH + (this.speaker ? 10 : 0);
+        
+        const boxH = Math.min(H - 40, Math.max(64, totalH)); // Clamp min/max
+        const boxY = H - boxH - 6;
 
         // Dark box with border
-        ctx.fillStyle = 'rgba(15, 12, 25, 0.92)';
+        ctx.fillStyle = 'rgba(15, 12, 25, 0.95)';
         ctx.fillRect(boxX, boxY, boxW, boxH);
         ctx.strokeStyle = '#C9B1FF';
         ctx.lineWidth = 1;
         ctx.strokeRect(boxX + 0.5, boxY + 0.5, boxW - 1, boxH - 1);
 
         // Speaker name (bitmap text)
+        let textStartY = boxY + 14;
         if (this.speaker) {
-            Engine.drawText(ctx, this.speaker, boxX + 8, boxY + 12, '#C9B1FF', 8, 'left');
+            // Draw name tag box or just text
+            Engine.drawText(ctx, this.speaker, boxX + 8, boxY + 12, '#FF77AA', 8, 'left'); // Different color for name
+            textStartY += 12;
         }
 
         // Dialogue text (word wrap, bitmap text)
-        const maxChars = Math.floor((boxW - 20) / 7);
-        const lines = this.wrapText(this.displayedText, maxChars);
-        const textY = boxY + (this.speaker ? 24 : 14);
         lines.forEach((line, i) => {
-            if (i < 3) Engine.drawText(ctx, line, boxX + 8, textY + i * 12, '#F0E6FF', 8, 'left');
+            // Check if line fits in box, primitive scrolling support (show last N lines)
+            // For now, just show first N that fit
+            if (textStartY + i * 12 < boxY + boxH - (this.choices ? choiceH : 10)) {
+                 Engine.drawText(ctx, line, boxX + 8, textStartY + i * 12, '#F0E6FF', 8, 'left');
+            }
         });
 
         // Blink indicator when done
@@ -121,7 +141,7 @@ const Dialogue = {
 
         // Choices
         if (this.done && this.choices) {
-            const cy = textY + Math.min(lines.length, 3) * 12 + 6;
+            const cy = boxY + boxH - choiceH - 4; // Align to bottom
             this.choices.forEach((choice, i) => {
                 const isSelected = i === this.selectedChoice;
                 const label = (isSelected ? '> ' : '  ') + choice;

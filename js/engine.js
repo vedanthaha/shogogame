@@ -151,6 +151,11 @@ const Engine = {
             await new Promise(r => setTimeout(r, 500));
             this.state = 'playing';
             this.showToast("Good morning, Shogo!");
+            
+            // Start the first quest automatically
+            setTimeout(() => {
+                if(Quests && Quests.accept) Quests.accept("shogo_morning");
+            }, 2000);
         })();
     },
 
@@ -352,8 +357,11 @@ const Engine = {
         NPC.renderAnimals(ctx, camX, camY, Maps.current);
 
         // 3. Characters (Y-sorted)
-        const rb = []; const ne = NPC.render(ctx, camX, camY, Maps.current); rb.push(...ne);
-        // Vedi companion (during shared quests)
+        const rb = []; 
+        // Filter out hidden NPCs (e.g. Vedi when riding)
+        const ne = NPC.render(ctx, camX, camY, Maps.current).filter(n => !n.hidden);
+        rb.push(...ne);
+        // Vedi companion (during shared quests) -- check if overriding map npc
         const vediComp = Quests.renderVediCompanion(ctx, camX, camY);
         if (vediComp && !Vehicles.riding) rb.push(vediComp);
 

@@ -154,6 +154,10 @@ const Player = {
     interact() {
         if (this.moving) return;
         const ft = this.getFacingTile();
+
+        // Check Quests First
+        if (Quests.checkInteract(Maps.current, ft.x, ft.y)) return;
+
         const obj = Maps.getObject(Maps.current, ft.x, ft.y);
 
         // NPC
