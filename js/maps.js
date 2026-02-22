@@ -28,22 +28,27 @@ const Maps = {
             ],
             objects: [
                 'AAAAAAAA',
-                'AE....LA',
+                'AE.F..LA', // Added F (plant) at (3,1)
                 'AE.....A',
-                'A..r...A',
-                'A.....lA',
-                'A....kcA',
-                'A...H..A',
-                'AAAAAAAA',
+                'A..r...A', // r at (3,3)
+                'A.....lA', // l at (6,4) - Needs mirror
+                'A....kcA', // k(5,5), c(6,5)
+                'w......A', // w (window) at (0,6)
+                'AAAAHAAA', // Door at (4,7)
             ],
             npcs: [],
-            doors: [{ x: 4, y: 6, target: 'shogo_house_f1', spawnX: 7, spawnY: 2 }],
+            doors: [{ x: 4, y: 7, target: 'shogo_house_f1', spawnX: 7, spawnY: 2 }],
             signs: [],
             interactables: [
                 { x: 1, y: 1, text: "Your cozy bed... you feel rested." },
-                { x: 5, y: 5, text: "A desk with a PC. Maybe check messages?" },
+                { x: 3, y: 1, text: "A small potted plant. It's resilient." }, // Added plant interaction
+                { x: 6, y: 5, text: "A desk with a PC. Maybe check messages?" },
+                { x: 6, y: 4, text: "A full length mirror. Looking sharp!" },
+                { x: 5, y: 5, text: "A bookshelf with manga and tech magazines." },
+                { x: 6, y: 1, text: "A simple lamp." },
+                { x: 0, y: 6, text: "Sunlight streaming in." }
             ],
-            playerStart: { x: 2, y: 1 },
+            playerStart: { x: 2, y: 2 },
         },
 
         shogo_house_f1: {
