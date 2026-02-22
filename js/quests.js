@@ -193,20 +193,19 @@ const Quests = {
                      return true;
                 }
             }
-         }
-         return false;
-    },
 
             if (step.type === 'visit_tile') {
+                // Determine ground type
                 const ground = Maps.getGround(mapId, x, y);
+                // step.tile is the tile type we are looking for (e.g. 'water')
                 if (step.map === mapId && ground === step.tile) {
                     Engine.showToast('Found some!');
                     this.advanceStep(entry.id);
                     return true;
                 }
             }
-        }
-        return false;
+         }
+         return false;
     },
 
     // Check if talking to this NPC advances a quest
