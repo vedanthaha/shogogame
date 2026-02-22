@@ -175,5 +175,9 @@
   "booth_npc": { "text": "This is the Voice Booth! Whether singing or speaking, your words matter." },
   "arena_npc1": { "text": "Deadlines are coming and I can barely keep up... but having a good leader helps." },
   "arena_npc2": { "text": "I disagree with Alex on the approach. We need to think bigger!" },
-  "arena_npc3": { "text": "I just want everyone to get along... the arguing stresses me out." }
+  "arena_npc3": { "text": "I just want everyone to get along... the arguing stresses me out." },
+  "generic_greet": {
+    "text": "Hello there! Beautiful day, isn't it?",
+    "choices": null
+  }
 }

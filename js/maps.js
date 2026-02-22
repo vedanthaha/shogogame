@@ -269,8 +269,9 @@ const Maps = {
                 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG',
             ],
             npcs: [
-                // Vedi removed here too to prevent static duplicate. 
-                // She should appear dynamically based on quest state or be in her house/overworld only.
+                { id: 'vedi', sprite: 'vedi', x: 8, y: 7, dir: 'down', dialogue: 'vedi_meetup_start', name: 'Vedi' },
+                { id: 'neighbor_1', sprite: 'npc_generic', x: 2, y: 6, dir: 'right', dialogue: 'generic_greet', name: 'Neighbor' },
+                { id: 'neighbor_2', sprite: 'npc_generic', x: 20, y: 15, dir: 'left', dialogue: 'generic_greet', name: 'Passerby' },
             ],
             doors: [
                 { x: 5, y: 5, target: 'shogo_house_f1', spawnX: 4, spawnY: 7 },
@@ -278,6 +279,8 @@ const Maps = {
                 { x: 29, y: 13, target: 'mhow_highway', spawnX: 1, spawnY: 4 },
                 { x: 29, y: 14, target: 'mhow_highway', spawnX: 1, spawnY: 4 },
                 { x: 29, y: 15, target: 'mhow_highway', spawnX: 1, spawnY: 4 },
+                // Highway entrance from road edge
+                { x: 29, y: 11, target: 'mhow_highway', spawnX: 1, spawnY: 3 }, // Added for more coverage
             ],
             signs: [
                 { x: 25, y: 11, text: 'Mhow Highway →\n(Drive safely!)' },

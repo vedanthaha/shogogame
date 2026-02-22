@@ -21,8 +21,8 @@
         "description": "Vedi is waiting outside.",
         "prereq": "shogo_morning",
         "steps": [
-            { "type": "talk_to", "target": "vedi", "dialogue": "vedi_meetup_start", "hint": "Find Vedi outside" },
-            { "type": "visit", "map": "overworld", "x": 15, "y": 25, "radius": 5, "hint": "Go for a walk with Vedi" }
+            { "type": "talk_to", "target": "vedi", "dialogue": "vedi_meetup_start", "hint": "Find Vedi outside your house" },
+            { "type": "visit", "map": "mridula_bhawan", "x": 12, "y": 15, "radius": 5, "hint": "Go for a walk with Vedi" }
         ],
         "reward": { "vibe": 15 },
         "completion": "Vedi: Walking is good for us!"
