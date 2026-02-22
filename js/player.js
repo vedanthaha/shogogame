@@ -155,6 +155,12 @@ const Player = {
         if (this.moving) return;
         const ft = this.getFacingTile();
 
+        // PC Interaction
+        if (Maps.current === 'shogo_bedroom' && ft.x === 6 && ft.y === 5) {
+            PC.open();
+            return;
+        }
+
         // Check Quests First
         if (Quests.checkInteract(Maps.current, ft.x, ft.y)) return;
 

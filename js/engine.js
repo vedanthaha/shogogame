@@ -73,6 +73,10 @@ const Engine = {
         window.addEventListener('keydown', e => {
             this.keys[e.key] = true;
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
+            
+            // === PC INPUT ===
+            if (this.state === 'pc') { PC.handleKey(e.key); return; }
+
             if (e.key === ' ' || e.key === 'e' || e.key === 'E' || e.key === 'Enter') {
                 if (this.state === 'intro_black') { this.advanceIntro(); return; }
                 if (this.state === 'intro_wake') { this.wakeUp(); return; }
@@ -93,15 +97,8 @@ const Engine = {
             if (e.key === 'q' || e.key === 'Q') {
                 if (['playing', 'swimming', 'driving', 'questlog'].includes(this.state)) Quests.toggleLog();
             }
-            if (e.key === 'q' || e.key === 'Q') {
-                if (['playing', 'swimming', 'driving', 'questlog'].includes(this.state)) Quests.toggleLog();
-            }
-            if (e.key === 'l' || e.key === 'L') {
-                 if (this.state === 'driving') {
-                     // L key while driving tries to toggle passenger
-                     Vehicles.togglePassenger();
-                 }
-            }
+            if (e.key === 'f' || e.key === 'F') Quests.toggleLog();
+            if (e.key === 'p' || e.key === 'P') Debug.toggle();
             if (e.key === 'Escape' && this.state === 'questlog') Quests.toggleLog();
             if (e.key === 'm' || e.key === 'M') {
                 if (['playing', 'swimming', 'driving', 'worldmap'].includes(this.state)) this.toggleWorldMap();
@@ -313,6 +310,7 @@ const Engine = {
 
     // ===== RENDER =====
     render() {
+        if (this.state === 'pc') { PC.render(this.ctx); return; }
         if (this.state.startsWith('intro')) { this.renderIntro(this.ctx); return; }
         this.renderGame(this.ctx);
     },
