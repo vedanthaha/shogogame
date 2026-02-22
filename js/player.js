@@ -86,6 +86,16 @@ const Player = {
                     Engine.transitionTo(door.target, door.spawnX, door.spawnY);
                     return;
                 }
+
+                // Update swim/walk state based on ground tile
+                const g = Maps.getGround(Maps.current, this.x, this.y);
+                if (g === 'W' && Engine.state === 'playing') {
+                    Engine.state = 'swimming';
+                    Engine.showToast('🏊 Swimming!');
+                } else if (g !== 'W' && Engine.state === 'swimming') {
+                    Engine.state = 'playing';
+                    this.setState('idle');
+                }
             } else {
                 if (dx !== 0) this.px += Math.sign(dx) * step;
                 if (dy !== 0) this.py += Math.sign(dy) * step;
@@ -268,6 +278,19 @@ const Player = {
 
         const key = this.getSprite();
         const sprite = Sprites.chars[key];
+
+        // Swimming: draw water ripple beneath player
+        if (Engine.state === 'swimming') {
+            const ripple = Math.floor(Engine.time * 3) % 2;
+            ctx.globalAlpha = 0.55;
+            ctx.fillStyle = '#6ab4d8';
+            ctx.fillRect(sx, sy + 10, 16, 6);
+            ctx.fillStyle = '#80c8e8';
+            if (ripple === 0) { ctx.fillRect(sx + 2, sy + 10, 4, 1); ctx.fillRect(sx + 10, sy + 10, 4, 1); }
+            else { ctx.fillRect(sx + 5, sy + 11, 3, 1); ctx.fillRect(sx + 11, sy + 11, 3, 1); }
+            ctx.globalAlpha = 1;
+        }
+
         if (sprite) ctx.drawImage(sprite, sx, sy);
     },
 
