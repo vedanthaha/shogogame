@@ -78,16 +78,12 @@ const Player = {
                 this.px = tx; this.py = ty;
                 this.x = this.targetX; this.y = this.targetY;
                 this.moving = false;
-                this.checkDoor();
-                // Update swim state after landing
-                const g = Maps.getGround(Maps.current, this.x, this.y);
-                if (g === 'W' && Engine.state !== 'swimming') {
-                    Engine.state = 'swimming';
-                    this.setState('swim');
-                    Engine.showToast("Swimming!");
-                } else if (g !== 'W' && Engine.state === 'swimming') {
-                    Engine.state = 'playing';
-                    this.setState('idle');
+
+                // Check for door trigger immediately upon arriving at tile
+                const door = Maps.getDoor(Maps.current, this.x, this.y);
+                if (door) {
+                    Engine.transitionTo(door.target, door.spawnX, door.spawnY);
+                    return;
                 }
             } else {
                 if (dx !== 0) this.px += Math.sign(dx) * step;

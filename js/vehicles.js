@@ -66,7 +66,7 @@ const Vehicles = {
         Player.py = this.py;
 
         Memory.set('drove_' + this.type);
-        Engine.showToast(`Driving ${this.type}... [E] to exit`);
+        Engine.showToast(`Driving ${this.type}... [E] exit, [L] passenger`);
         AudioManager.playClick();
     },
 
@@ -234,28 +234,36 @@ const Vehicles = {
     togglePassenger() {
         if (!this.riding) return;
 
-        // If already has passenger, drop them off?
-        if (this.vediPassenger) {
-            this.vediPassenger = false;
-            Engine.showToast("Vedi hopped off.");
-            AudioManager.playClick();
+        // Check if Vedi is nearby (within 3 tiles)
+        const map = Maps.data[Maps.current];
+        const vedi = map?.npcs?.find(n => n.id === 'vedi' || n.name === 'Vedi');
+        
+        if (!vedi) {
+            Engine.showToast("Vedi isn't here.");
             return;
         }
 
-        // Search for Vedi nearby - Check by sprite name or id
-        const map = Maps.data[Maps.current];
-        const vedi = (map?.npcs?.find(n => (n.id.includes('vedi') || n.sprite === 'vedi') && Math.abs(n.x - this.x) <= 4 && Math.abs(n.y - this.y) <= 4)) ||
-            (Quests.companionNPC && Quests.companionNPC.id.includes('vedi') ? Quests.companionNPC : null);
-
-        if (vedi) {
-             this.vediPassenger = true;
-             // Hide map NPC immediately
-             vedi.hidden = true; 
-             
-             Engine.showToast("Vedi hopped on!");
-             AudioManager.playSuccess();
+        const dist = Math.abs(this.x - vedi.x) + Math.abs(this.y - vedi.y);
+        
+        if (this.vediPassenger) {
+            // Get off logic: Handled by dismount or manual get off?
+            // "L" to toggle.
+            this.vediPassenger = false;
+            vedi.hidden = false;
+            vedi.x = this.x + (this.dir === 'left' ? 1 : -1);
+            vedi.y = this.y;
+            Engine.showToast("Vedi got out.");
         } else {
-            Engine.showToast("No one nearby to ride with.");
+            if (dist > 4) {
+                Engine.showToast("Vedi is too far away.");
+                return;
+            }
+            this.vediPassenger = true;
+            vedi.hidden = true;
+            Engine.showToast("Vedi hopped in!");
+            // Check potential quest completion for getting in car?
+            // "vedi_highway_drive" quest might need this state.
+            // If there's an active quest step to "Pick up Vedi", we can advance.
         }
     },
 };

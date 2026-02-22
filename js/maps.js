@@ -490,3 +490,66 @@ const Maps = {
         return (m.animals || []).find(a => a.x === x && a.y === y) || null;
     }
 };
+
+// ===== VEHICLES =====
+const Vehicles = {
+    // ... existing properties ...
+
+    togglePassenger() {
+        if (!this.type || !this.riding) return;
+
+        // If she is already in, let her out
+        if (this.vediPassenger) {
+            this.vediPassenger = false;
+            // Respawn her
+            Engine.showToast("Vedi got out.");
+            const map = Maps.data[Maps.current];
+            const vedi = map?.npcs?.find(n => n.id === 'vedi' || n.name === 'Vedi');
+            if (vedi) {
+                vedi.hidden = false;
+                vedi.x = this.x + (this.dir === 'left' ? 1 : -1);
+                vedi.y = this.y;
+            }
+            return;
+        }
+
+        // Try to pick her up
+        const map = Maps.data[Maps.current];
+        const vedi = map?.npcs?.find(n => n.id === 'vedi' || n.name === 'Vedi');
+        
+        if (!vedi) {
+            Engine.showToast("Vedi isn't here.");
+            return;
+        }
+
+        const dist = Math.abs(this.x - vedi.x) + Math.abs(this.y - vedi.y);
+        if (dist > 4) {
+            Engine.showToast("Move closer to Vedi.");
+            return;
+        }
+
+        this.vediPassenger = true;
+        vedi.hidden = true;
+        Engine.showToast("Vedi hopped in! Let's go!");
+        AudioManager.playClick();
+        
+        // Auto-check quest logic just in case
+        if(Quests.active.some(q => q.id.includes('vedi'))) {
+             // Maybe advance step? Usually quest is "drive to X with Vedi".
+             // The checkLocation will handle it if Vedi is passenger.
+        }
+    },
+
+    update(dt) {
+        // ... existing update logic ...
+
+        // Check for door trigger immediately upon arriving at tile
+        const door = Maps.getDoor(Maps.current, this.x, this.y);
+        if (door) {
+            Engine.transitionTo(door.target, door.spawnX, door.spawnY);
+            return;
+        }
+
+        // ... existing update logic ...
+    },
+};
