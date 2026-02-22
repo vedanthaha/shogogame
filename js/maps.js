@@ -107,10 +107,10 @@ const Maps = {
                 'DGGGGPGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPGGGGGFD',
                 'DGGGGPGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPGGGGGFD',
                 'DGGGGPGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPPGGGGGFD',
-                'DGGGGPGGGGGGGGGGWWWWWGGGGGGGGGGGGGGGGPGGGGGGFD',
-                'DGGGGPGGGGGGGGGWWWWWWGGGGGGGGGGGGGGGPPGGGGGGGD',
-                'DGGGGPGGGGGGGGGGWWWWWGGGGGGGGGGGGGGPPGGGGGGGGD',
-                'DGGGGPGGGGGGGFGGGWWWGGGFGGGGGGGGGPPPPGGGGGGGGD',
+                'DGGGGPGGGGGGGGWWWWWWWWWGGGGGGGGGGGGGGGPGGGGGGFD',
+                'DGGGGPGGGGGGGWWWWWWWWWWWGGGGGGGGGGGGGGPPGGGGGGGD',
+                'DGGGGPGGGGGGGGWWWWWWWWWWWGGGGGGGGGGGGGPPGGGGGGGGD',
+                'DGGGGPGGGGGGGFGGWWWWWWWWGGFGGGGGGGGGPPPPGGGGGGGGD',
                 'DGGGPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPGGGPGGGGGGFD',
                 'DGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPPGGGGGGFD',
                 'DGFGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGPPPGGGGGGFD',
@@ -149,6 +149,7 @@ const Maps = {
                 { x: 36, y: 19, text: 'Team Arena\nLeadership through empathy.' },
                 { x: 5, y: 25, text: "Shogo's House\nHome sweet home." },
                 { x: 16, y: 25, text: "Vedi's House\nBest friend's place." },
+                { x: 15, y: 9, text: 'Comfort Lake\nWalk into the water to swim!' },
             ],
             animals: [
                 { id: 'puppy1', type: 'puppy', x: 10, y: 15, homeX: 10, homeY: 15 },
@@ -400,6 +401,11 @@ const Maps = {
 
         // Fences near pond
         [[16, 16], [17, 16], [22, 16], [23, 16], [16, 20], [17, 20], [22, 20], [23, 20]].forEach(([x, y]) => { obj[y][x] = 'f'; });
+
+        // Lake area: benches and fences around the water (x=16-24, y=10-13)
+        [[15, 10], [15, 13], [25, 10], [25, 13]].forEach(([x, y]) => { if (obj[y][x] === '.') obj[y][x] = 'b'; }); // benches
+        [[15, 9], [16, 9], [17, 9], [23, 9], [24, 9], [25, 9]].forEach(([x, y]) => { if (obj[y][x] === '.') obj[y][x] = 'f'; }); // fences at top
+        [[15, 14], [16, 14], [17, 14], [23, 14], [24, 14], [25, 14]].forEach(([x, y]) => { if (obj[y][x] === '.') obj[y][x] = 'f'; }); // fences at bottom
 
         // Sakura trees
         [[5, 7], [16, 6], [22, 8], [35, 5], [10, 20], [27, 19], [33, 20], [17, 27], [10, 27], [25, 28], [35, 27],

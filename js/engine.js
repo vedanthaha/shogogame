@@ -589,8 +589,17 @@ const Engine = {
             if (this.transitionAlpha <= 0) {
                 this.transitionAlpha = 0;
                 const g = Maps.getGround(Maps.current, Player.x, Player.y);
-                this.state = g === 'W' ? 'swimming' : 'playing';
+                if (Vehicles.riding) this.state = 'driving';
+                else this.state = g === 'W' ? 'swimming' : 'playing';
                 if (!AudioManager.bgmPlaying) AudioManager.startBGM();
+                // If Vedi was a passenger, spawn her hidden in the new map so she stays with us
+                if (Vehicles.vediPassenger) {
+                    const newMap = Maps.data[Maps.current];
+                    if (newMap && !(newMap.npcs || []).find(n => n.id === 'vedi_passenger')) {
+                        if (!newMap.npcs) newMap.npcs = [];
+                        newMap.npcs.push({ id: 'vedi_passenger', sprite: 'vedi', x: Player.x, y: Player.y, dir: 'down', dialogue: 'vedi_highway_talk', name: 'Vedi', hidden: true });
+                    }
+                }
             }
         }
     },

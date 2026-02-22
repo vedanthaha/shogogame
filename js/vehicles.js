@@ -206,22 +206,26 @@ var Vehicles = {
     },
 
     interact(vehicle) {
-        // Shared ride logic: Find Vedi within 5 tiles
-        const map = Maps.data[Maps.current];
-        // Use flexible ID check like in togglePassenger
-        const vedi = (map?.npcs?.find(n => (n.id.includes('vedi') || n.sprite === 'vedi') && Math.abs(n.x - vehicle.x) <= 5 && Math.abs(n.y - vehicle.y) <= 5)) ||
-            (Quests.companionNPC && Quests.companionNPC.id.includes('vedi') ? Quests.companionNPC : null);
+        // If already have Vedi as passenger, just mount
+        if (this.vediPassenger) { this.mount(vehicle); return; }
 
-        if (vedi && !this.vediPassenger) {
-            Dialogue.show("Do you want Vedi to sit with you?", ["Yes!", "No, just me."], "Vedi", (idx) => {
-                // Prevent immediate re-trigger of interaction by clearing the key or adding a small cooldown
-                Engine.keys['e'] = false; 
+        // Find Vedi within 5 tiles
+        const map = Maps.data[Maps.current];
+        const vedi = map?.npcs?.find(n =>
+            (n.id.includes('vedi') || n.sprite === 'vedi') &&
+            !n.hidden &&
+            Math.abs(n.x - vehicle.x) <= 5 &&
+            Math.abs(n.y - vehicle.y) <= 5
+        );
+
+        if (vedi) {
+            Dialogue.show("Vedi is nearby! Want her to come with you?", ["Yes, let's go!", "Nah, solo ride."], "Vedi", (idx) => {
+                Engine.keys['e'] = false;
                 Engine.keys['E'] = false;
-                
                 if (idx === 0) {
                     this.vediPassenger = true;
+                    vedi.hidden = true;
                     this.mount(vehicle);
-                    Engine.showToast("Vedi hopped on!");
                 } else {
                     this.mount(vehicle);
                 }
