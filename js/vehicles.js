@@ -1,5 +1,5 @@
 // ===== VEHICLE SYSTEM =====
-const Vehicles = {
+var Vehicles = {
     riding: false,
     type: null, // 'scooty' | 'car'
     vediPassenger: false,
