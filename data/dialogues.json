@@ -179,5 +179,23 @@
   "generic_greet": {
     "text": "Hello there! Beautiful day, isn't it?",
     "choices": null
+  },
+  "vedi_residential": {
+    "text": "Shogo! The car is right there — let's get going!",
+    "choices": [
+      {
+        "label": "Yeah, let's drive!",
+        "vibeGain": 5,
+        "response": "Finally! I've been waiting for this. You drive, I'll control the aux."
+      }
+    ]
+  },
+  "vedi_after_ride": {
+    "text": "That drive was so fun. We should do it again sometime!",
+    "choices": null
+  },
+  "vedi_highway_talk": {
+    "text": "This highway goes all the way to Mhow. Can you believe it? It feels so free out here.",
+    "choices": null
   }
 }
