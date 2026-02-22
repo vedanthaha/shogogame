@@ -1,0 +1,237 @@
+{
+  "luna_greet": {
+    "text": "I... I tried to share my art online but nobody noticed. Maybe it's not good enough...",
+    "choices": [
+      {
+        "label": "Your art matters. Can I see it?",
+        "vibeGain": 15,
+        "response": "R-really? *shows sketchbook* Thank you for asking. That means a lot."
+      },
+      {
+        "label": "Their loss! More art for us!",
+        "vibeGain": 10,
+        "response": "Haha! I never thought of it that way... Maybe I'll keep drawing!"
+      },
+      {
+        "label": "Take your time. Art isn't a race.",
+        "vibeGain": 8,
+        "response": "...you're right. I was putting too much pressure on myself. Thanks."
+      }
+    ],
+    "helped": "I posted my art today and someone left a nice comment! Thank you, Shogo!"
+  },
+  "kai_greet": {
+    "text": "Everyone expects me to have it all figured out. I don't even know what I want...",
+    "choices": [
+      {
+        "label": "It's okay not to know yet.",
+        "vibeGain": 15,
+        "response": "You really think so? Maybe that's okay... Thanks, Shogo."
+      },
+      {
+        "label": "Nobody has it figured out!",
+        "vibeGain": 10,
+        "response": "Wait... really? Even adults? That's actually comforting!"
+      },
+      {
+        "label": "No rush. Life's not a speedrun.",
+        "vibeGain": 8,
+        "response": "A speedrun... heh. Maybe I should just play the game."
+      }
+    ],
+    "helped": "I started journaling about things I enjoy. Small steps! Thanks for believing in me."
+  },
+  "mira_greet": {
+    "text": "Hi... I just moved here and don't know anyone. Everyone already has their groups...",
+    "choices": [
+      {
+        "label": "Welcome! You've got a friend now.",
+        "vibeGain": 15,
+        "response": "Just like that?! You have no idea how much I needed that. Thank you!"
+      },
+      {
+        "label": "Solo queue is where it's at!",
+        "vibeGain": 10,
+        "response": "Did you just use gaming terms? I like your vibe. Let's duo queue!"
+      },
+      {
+        "label": "This town is really warm.",
+        "vibeGain": 8,
+        "response": "I can feel it already. Especially talking to you."
+      }
+    ],
+    "helped": "I made two more friends today! This town really is special!"
+  },
+  "rex_greet": {
+    "text": "I can't write a single song. Maybe the music just... left me.",
+    "choices": [
+      {
+        "label": "It's just resting. Like you should.",
+        "vibeGain": 15,
+        "response": "Resting... I never gave myself permission to breathe. Thanks, Shogo."
+      },
+      {
+        "label": "Writer's block? More like a nap!",
+        "vibeGain": 10,
+        "response": "Writer's NAP?! That made me laugh. First time in days!"
+      },
+      {
+        "label": "Creativity comes in waves.",
+        "vibeGain": 8,
+        "response": "Between waves... the ocean isn't gone. Just waiting."
+      }
+    ],
+    "helped": "I wrote something today! Rough, but it's SOMETHING! Thanks for the rest advice."
+  },
+  "vedi_greet": {
+    "text": "Hey Shogo! Beautiful day, huh? I was just thinking about heading to the lake later.",
+    "choices": [
+      {
+        "label": "Let's go together!",
+        "vibeGain": 15,
+        "response": "Yeah! That sounds perfect. You always make things better just by being there."
+      },
+      {
+        "label": "It really is a nice day.",
+        "vibeGain": 10,
+        "response": "Right? Sometimes you just gotta stop and notice. Glad I have you for that."
+      },
+      {
+        "label": "Have you eaten yet?",
+        "vibeGain": 8,
+        "response": "...no. Thanks for always checking on me, seriously."
+      }
+    ],
+    "helped": "You know what? Having you as a best friend is the best thing about this town."
+  },
+  "vedi_home": {
+    "text": "Welcome to my place! Make yourself at home. Want to just hang out for a bit?",
+    "choices": [
+      {
+        "label": "Always!",
+        "vibeGain": 10,
+        "response": "This is what life's about, right? Just... being here. Together."
+      },
+      {
+        "label": "Your place feels so warm.",
+        "vibeGain": 8,
+        "response": "That's because you're in it! ...Okay that was cheesy but I meant it."
+      }
+    ],
+    "helped": "Just chilling here. Some days that's all you need."
+  },
+  "comfort_npc": {
+    "text": "Welcome to Comfort House! This is a safe space for everyone. Feel free to relax."
+  },
+  "studio_npc": {
+    "text": "Welcome to the Creator Studio! Creativity flows best when you're relaxed."
+  },
+  "booth_npc": {
+    "text": "This is the Voice Booth! Whether singing or speaking, your words matter."
+  },
+  "arena_npc1": {
+    "text": "Deadlines are coming and I can barely keep up... but having a good leader helps.",
+    "choices": [
+      {
+        "label": "Let's break it into steps.",
+        "vibeGain": 10,
+        "response": "That... actually makes it feel manageable. Thanks!"
+      },
+      {
+        "label": "Take a breath first.",
+        "vibeGain": 8,
+        "response": "You're right. I forget to breathe sometimes."
+      }
+    ],
+    "helped": "Things are going smoother now! Thanks for the leadership."
+  },
+  "arena_npc2": {
+    "text": "I disagree with Alex on the approach. We need to think bigger!",
+    "choices": [
+      {
+        "label": "Both ideas have merit.",
+        "vibeGain": 10,
+        "response": "I guess combining approaches could work..."
+      },
+      {
+        "label": "Let's hear everyone out.",
+        "vibeGain": 8,
+        "response": "Fair enough. I'll listen first."
+      }
+    ],
+    "helped": "We found a compromise! Teamwork wins."
+  },
+  "arena_npc3": {
+    "text": "I just want everyone to get along... the arguing stresses me out.",
+    "choices": [
+      {
+        "label": "You're the heart of this team.",
+        "vibeGain": 10,
+        "response": "Really? That means so much..."
+      },
+      {
+        "label": "It'll work out. I promise.",
+        "vibeGain": 8,
+        "response": "I believe you. Thanks for being here."
+      }
+    ],
+    "helped": "The team feels so much better now! Harmony achieved."
+  },
+  "luna_quest_start": {
+    "text": "I found this beautiful little spot on the hilltop... wildflowers everywhere! You should go see it. It's north of here, past the garden area."
+  },
+  "luna_quest_done": {
+    "text": "You went! What was it like? ...That beautiful, huh? I'm going to paint it tomorrow. Thank you for going, Shogo."
+  },
+  "kai_quest_start": {
+    "text": "Ugh... I lost my journal somewhere near the crossroads. I wrote all my thoughts in it. Could you help me look? It should be near the main path intersection."
+  },
+  "kai_quest_done": {
+    "text": "You found it! *hugs journal* All my thoughts were in here. I was so worried... Thank you, Shogo. Really."
+  },
+  "mira_quest_start": {
+    "text": "I want to make my new place feel like home! Could you find some flowers for me? There are pretty ones growing around town."
+  },
+  "mira_quest_done": {
+    "text": "Oh! These are gorgeous! My room is going to feel so warm now. You really helped me feel at home here."
+  },
+  "rex_quest_start": {
+    "text": "I need new sounds for a song. Real ones, not digital. Could you go listen to the lake and the birds, then tell me what you hear?"
+  },
+  "rex_quest_done": {
+    "text": "Lake waves and birdsong... I can hear it already! *starts humming* This is going to be my best song yet!"
+  },
+  "vedi_lake_start": {
+    "text": "Hey! Let's go to the lake together. I heard the water is really clear today. Walk with me?"
+  },
+  "vedi_lake_walk": {
+    "text": "Look at the light on the water... It's so calm here. Let's find a good spot to sit."
+  },
+  "vedi_lake_spot": {
+    "text": "This is perfect. Just... listen. *sits down* Sometimes the best conversations are just being quiet together."
+  },
+  "vedi_lake_done": {
+    "text": "Thanks for coming with me. These little moments... they mean more than you know."
+  },
+  "vedi_stars_start": {
+    "text": "I heard there's an amazing view from the eastern hills! Let's go explore together. It'll be worth it!"
+  },
+  "vedi_stars_hill": {
+    "text": "We're getting higher! Look, you can see the whole town from here. Keep going!"
+  },
+  "vedi_stars_top": {
+    "text": "Wow... you can see everything from up here. The town, the lake, the trees... It all looks so small and peaceful."
+  },
+  "vedi_stars_done": {
+    "text": "Same sky, same stars... but it feels different when you're up here with someone. Thanks for always being here, Shogo."
+  },
+  "vedi_residential": {
+    "text": "Shogo! Ready for the day? The scooty is in the garage if you want to head out."
+  },
+  "vedi_after_ride": {
+    "text": "That ride was amazing! My hair's a mess, but it was worth it. Let's do that again soon."
+  },
+  "vedi_highway_talk": {
+    "text": "The air out here is so different... cleaner. Sometimes you just need to keep moving to feel still, you know?"
+  }
+}
